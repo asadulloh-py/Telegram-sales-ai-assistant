@@ -1,4 +1,22 @@
 import os
+import threading
+from flask import Flask
+
+flask_app = Flask('')
+
+@flask_app.route('/')
+def home():
+    return "Bot is running 24/7!"
+
+def run_flask():
+    port = int(os.environ.get("PORT", 8080))
+    flask_app.run(host='0.0.0.0', port=port)
+
+def keep_alive():
+    t = threading.Thread(target=run_flask)
+    t.daemon = True
+    t.start()
+import os
 from dotenv import load_dotenv
 
 from telegram import Update
@@ -56,7 +74,7 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception as e:
         await update.message.reply_text(f"Error: {e}")
-
+keep_alive()
 # Main function
 def main():
 
